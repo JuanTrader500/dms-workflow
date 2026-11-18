@@ -32,7 +32,7 @@ Sin `POSTGRES_HOST` se usa SQLite y `IA_PROVEEDOR=fake` (modo desarrollo).
 ## Estructura
 
 ```
-.opencode/   contexto del proyecto y plan para agentes
+
 backend/     Django (apps por módulo del dominio) + tests
 frontend/    HTML/CSS/JS servido por Nginx
 docs/        diagramas Mermaid, SRS y API
