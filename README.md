@@ -3,8 +3,6 @@
 Sistema de gestión de incapacidades y licencias (Técnicas de Modelado de Software — UTP).
 Monolito estructurado: **Django + DRF**, **PostgreSQL**, frontend **HTML/CSS/JS**, **Docker Compose** (3 servicios) y módulo de IA con **Gemini**.
 
-> Contexto completo y plan de desarrollo: [`.opencode/CONTEXTO_PROYECTO.md`](.opencode/CONTEXTO_PROYECTO.md) · [`.opencode/PLAN_DESARROLLO_MVP.md`](.opencode/PLAN_DESARROLLO_MVP.md)
-
 ## Arranque rápido
 
 ```bash
