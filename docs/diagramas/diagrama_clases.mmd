@@ -1,0 +1,255 @@
+---
+config: {"look":"classic","theme":"base","themeVariables":{"fontFamily":"Arial, Helvetica, sans-serif","background":"#ffffff","primaryColor":"#ffffff","primaryTextColor":"#000000","primaryBorderColor":"#000000","secondaryColor":"#ffffff","tertiaryColor":"#ffffff","mainBkg":"#ffffff","nodeBorder":"#000000","classText":"#000000","lineColor":"#000000","textColor":"#000000","edgeLabelBackground":"#ffffff"}}
+---
+classDiagram
+    direction TB
+    class Colaborador {
+        +int id
+        +String nombre
+        +String identificacion
+        +String cargo
+        +String email
+        +boolean activo
+        +existeYActivo() boolean
+    }
+    class Usuario {
+        +int id
+        +String nombreUsuario
+        +String email
+        +RolUsuario rol
+        +boolean activo
+        +autenticar(credenciales) boolean
+        +tienePermiso(accion) boolean
+    }
+    class Incapacidad {
+        +int id
+        +TipoCaso tipoCaso
+        +Date fechaInicio
+        +Date fechaFin
+        +int diasIncapacidad
+        +CanalRecepcion canal
+        +EstadoCaso estado
+        +boolean remisionTardia
+        +Date fechaLimiteTranscripcion
+        +int idResponsableActual
+        +registrar() void
+        +cambiarEstado(nuevoEstado) void
+        +calcularDiasTranscurridos() int
+        +validarPlazoRemision() boolean
+        +archivar() void
+    }
+    class ChecklistDocumental {
+        +int id
+        +boolean completo
+        +generarItems(tipoCaso) void
+        +evaluarCompletitud() boolean
+        +obtenerFaltantes() List~ItemChecklist~
+    }
+    class ItemChecklist {
+        +int id
+        +TipoDocumento tipoRequerido
+        +EstadoItem estado
+        +marcarCargado() void
+    }
+    class DocumentoSoporte {
+        +int id
+        +String nombreArchivo
+        +String formato
+        +String rutaAlmacenamiento
+        +TipoDocumento tipoDocumento
+        +Date fechaCarga
+        +boolean esClinico
+        +validarFormato() boolean
+        +etiquetarTipo(tipo) void
+        +destruir() void
+    }
+    class DatosExtraidos {
+        +int id
+        +String nombreColaborador
+        +String identificacion
+        +Date fechaInicio
+        +Date fechaFin
+        +int diasIncapacidad
+        +String entidadEmisora
+        +double confianza
+        +EstadoValidacion estado
+        +compararConRegistro(incapacidad) boolean
+        +requiereRevisionManual() boolean
+    }
+    class ServicioIAGemini {
+        +double umbralConfianza
+        +int timeoutSegundos
+        +extraerDatos(documento, esquema) DatosExtraidos
+        +descartarCamposClinicos(respuesta) void
+        +estaDisponible() boolean
+    }
+    class AvisoSubsanacion {
+        +int id
+        +int numeroAviso
+        +Date fechaEnvio
+        +Date fechaLimite
+        +boolean respondido
+        +calcularPlazoHabil(fecha) Date
+        +enviar() void
+    }
+    class EntidadEPSARL {
+        +int id
+        +String nombre
+        +TipoEntidad tipo
+        +int plazoTranscripcionDias
+        +boolean transcripcionPorCorreo
+        +calcularPlazo(tipoCaso) int
+    }
+    class Radicacion {
+        +int id
+        +Date fechaRadicacion
+        +String numeroRadicado
+        +String evidenciaRuta
+        +String respuestaEntidad
+        +String causalRechazo
+        +registrarRadicacion() void
+        +registrarRespuesta(respuesta) void
+    }
+    class SeguimientoCobro {
+        +int id
+        +Date fecha
+        +EstadoCobro estado
+        +double saldoAdeudado
+        +String evidenciaRuta
+        +registrar() void
+    }
+    class ReconocimientoEconomico {
+        +int id
+        +double ibc
+        +double porcentaje
+        +String responsablePago
+        +calcular(dias) void
+    }
+    class RequerimientoCobro {
+        +int id
+        +int numero
+        +Date fecha
+        +String fundamentoHecho
+        +String fundamentoDerecho
+        +registrar() void
+    }
+    class AlertaPlazo {
+        +int id
+        +TipoAlerta tipo
+        +int umbralDias
+        +Date fechaGeneracion
+        +boolean atendida
+        +generar() void
+        +notificar() void
+    }
+    class ConceptoRehabilitacion {
+        +int id
+        +Date fechaEmision
+        +ResultadoConcepto resultado
+        +Date fechaRemisionAFP
+        +registrar() void
+        +notificarIncumplimiento() void
+    }
+    class EscalamientoCartera {
+        +int id
+        +Date fechaTraslado
+        +boolean gestionAgotada
+        +boolean pagoRecuperado
+        +trasladar() void
+        +registrarGestionAgotada() void
+    }
+    class GestionJuridica {
+        +int id
+        +Date fechaTraslado
+        +DecisionFinal decisionFinal
+        +registrarDecision(decision) void
+    }
+    class ConciliacionContable {
+        +int id
+        +String periodo
+        +double valorConsignado
+        +boolean identificado
+        +cruzarPagos(casos) void
+        +marcarPendiente() void
+    }
+    class ReporteAusentismo {
+        +int id
+        +String periodo
+        +Date fechaGeneracion
+        +generar() void
+        +enviarASGSST() void
+    }
+    class AuditoriaGestion {
+        +int id
+        +int idUsuario
+        +Date timestamp
+        +String accion
+        +String detalle
+        +registrar() void
+    }
+    class RolUsuario {
+        <<enumeration>>
+        COLABORADOR
+        AUXILIAR_ADMIN_PERSONAL
+        LIDER
+        CARTERA
+        JURIDICA
+        CONTABILIDAD
+        GESTION_DOCUMENTAL
+    }
+    class EstadoCaso {
+        <<enumeration>>
+        REGISTRADA
+        DOC_INCOMPLETA
+        PENDIENTE_DECISION_ADMIN
+        EN_REVISION_INCONSISTENCIA
+        VALIDADA
+        TRANSCRITA
+        COBRADA
+        PAGADA
+        RECHAZADA
+        ARCHIVADA
+    }
+    class TipoCaso {
+        <<enumeration>>
+        ENFERMEDAD_GENERAL
+        ACCIDENTE_LABORAL
+        ACCIDENTE_TRANSITO
+        LICENCIA_MATERNIDAD
+        LICENCIA_PATERNIDAD
+    }
+    class CanalRecepcion {
+        <<enumeration>>
+        RECEPCION_FISICA
+        OFICINAS_PRINCIPALES
+        LIDERES_COMERCIALES
+        CORREO_ELECTRONICO
+    }
+    Colaborador "1" --> "0..*" Incapacidad : reporta
+    Usuario "1" --> "0..*" AuditoriaGestion : genera
+    Usuario "1" --> "0..*" Incapacidad : gestiona
+    Incapacidad "1" *-- "1" ChecklistDocumental : tiene
+    ChecklistDocumental "1" *-- "1..*" ItemChecklist : contiene
+    ItemChecklist "1" --> "0..1" DocumentoSoporte : se completa con
+    Incapacidad "1" *-- "0..*" DocumentoSoporte : adjunta
+    DocumentoSoporte "1" --> "0..1" DatosExtraidos : produce
+    ServicioIAGemini ..> DatosExtraidos : genera
+    ServicioIAGemini ..> DocumentoSoporte : analiza
+    DatosExtraidos ..> Incapacidad : valida contra
+    Incapacidad "1" *-- "0..2" AvisoSubsanacion : notifica
+    Incapacidad "0..*" --> "1" EntidadEPSARL : pertenece a
+    Incapacidad "1" *-- "0..*" Radicacion : radica
+    Incapacidad "1" *-- "0..*" SeguimientoCobro : monitorea
+    Incapacidad "1" *-- "1" ReconocimientoEconomico : calcula
+    Incapacidad "1" *-- "0..*" RequerimientoCobro : cobra
+    Incapacidad "1" *-- "0..*" AlertaPlazo : dispara
+    Incapacidad "1" *-- "0..1" ConceptoRehabilitacion : requiere
+    Incapacidad "1" --> "0..1" EscalamientoCartera : escala a
+    EscalamientoCartera "1" --> "0..1" GestionJuridica : escala a
+    Incapacidad "0..*" --> "0..1" ConciliacionContable : se concilia en
+    Incapacidad "0..*" --> "0..*" ReporteAusentismo : incluida en
+    Incapacidad "1" *-- "0..*" AuditoriaGestion : registra
+    Usuario --> RolUsuario
+    Incapacidad --> EstadoCaso
+    Incapacidad --> TipoCaso
+    Incapacidad --> CanalRecepcion

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DMS Workflow — Ingreso</title>
+  <link rel="stylesheet" href="css/base.css">
+</head>
+<body>
+  <main style="max-width:380px">
+    <h1>DMS Workflow</h1>
+    <form id="form-login" class="card">
+      <label>Usuario<input name="usuario" autocomplete="username" required></label>
+      <label>Contraseña<input name="clave" type="password" autocomplete="current-password" required></label>
+      <p id="error" role="alert"></p>
+      <button type="submit">Ingresar</button>
+    </form>
+  </main>
+  <script type="module" src="js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+---
+config:
+  look: classic
+  theme: base
+  themeVariables:
+    fontFamily: Arial, Helvetica, sans-serif
+    background: "#ffffff"
+    primaryColor: "#ffffff"
+    primaryTextColor: "#000000"
+    primaryBorderColor: "#000000"
+    lineColor: "#000000"
+    textColor: "#000000"
+    actorBkg: "#ffffff"
+    actorBorder: "#000000"
+    actorTextColor: "#000000"
+    actorLineColor: "#000000"
+    signalColor: "#000000"
+    signalTextColor: "#000000"
+    labelBoxBkgColor: "#ffffff"
+    labelBoxBorderColor: "#000000"
+    labelTextColor: "#000000"
+    loopTextColor: "#000000"
+    noteBkgColor: "#f2f2f2"
+    noteBorderColor: "#000000"
+    noteTextColor: "#000000"
+    activationBkgColor: "#ffffff"
+    activationBorderColor: "#000000"
+    sequenceNumberColor: "#ffffff"
+---
+sequenceDiagram
+    autonumber
+    actor Aux as Auxiliar Admin. de Personal
+    participant UI as Interfaz Web
+    participant API as Backend Django/DRF
+    participant DB as PostgreSQL
+    participant IA as API Gemini
+    participant AUD as Auditoría
+    participant SCH as Scheduler Alertas
+
+    Note over Aux,SCH: Happy path: registro, validación con IA y radicación de una incapacidad
+
+    Aux->>UI: Inicia registro (colaborador, tipo, fecha inicio, canal)
+    UI->>API: POST /incapacidades
+    API->>DB: Consultar colaborador activo
+    DB-->>API: Colaborador existente y activo
+    API->>DB: Crear Incapacidad (estado REGISTRADA, ID único)
+    API->>DB: Consultar reglas documentales por tipo de caso
+    DB-->>API: Documentos requeridos
+    API->>DB: Generar ChecklistDocumental (ítems Pendiente)
+    API->>AUD: Registrar acción (creación de caso)
+    API-->>UI: Caso creado + checklist
+    UI-->>Aux: Muestra caso y checklist
+
+    loop Por cada documento requerido
+        Aux->>UI: Carga archivo y etiqueta tipo de documento
+        UI->>API: POST /documentos
+        API->>API: Validar formato (imagen o PDF)
+        API->>DB: Almacenar archivo y marcar ítem Cargado
+        API->>IA: Enviar documento + esquema del tipo
+        IA-->>API: JSON con datos operativos y confianza
+        API->>API: Descartar campos clínicos si existen
+        API->>DB: Guardar DatosExtraidos
+    end
+
+    API->>API: Validar completitud del checklist
+    API->>DB: Estado Documentación completa
+
+    API->>API: Comparar datos extraídos vs. registrados
+    alt Datos coinciden y confianza mayor o igual a 85 por ciento
+        API->>DB: Marcar caso VALIDADA
+    end
+
+    API->>DB: Consultar plazo de transcripción de la EPS/ARL
+    DB-->>API: Plazo parametrizado
+    API->>DB: Asociar entidad y guardar fecha límite de transcripción
+    API->>AUD: Registrar acción (validación y asociación)
+    API-->>UI: Caso validado, listo para radicar
+    UI-->>Aux: Notifica caso validado
+
+    Aux->>UI: Registra radicación con evidencia
+    UI->>API: POST /radicaciones
+    API->>DB: Guardar Radicacion y evidencia
+    API->>DB: Cambiar estado a TRANSCRITA
+    API->>AUD: Registrar acción (radicación)
+    API-->>UI: Radicación confirmada
+    UI-->>Aux: Caso en estado TRANSCRITA
+
+    SCH->>DB: Revisión diaria de plazos y umbrales de días
+    DB-->>SCH: Casos pendientes de alerta
+    SCH->>API: Generar alertas de vencimiento y umbral
+    API-->>Aux: Notificación por correo y en sistema

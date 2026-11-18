@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+db.sqlite3
+staticfiles/
+
+# Entorno y secretos
+.env
+*.pem
+
+# Archivos subidos (pueden contener datos de salud)
+storage/*
+!storage/.gitkeep
+
+# IDE / SO
+.idea/
+.vscode/
+.DS_Store
+.opencode
